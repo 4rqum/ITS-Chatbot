@@ -1,0 +1,151 @@
+{
+  "_comment": "UMich-ITS Chatbot - Intents (single-word, high-signal tokens only).",
+  "schema_version": 1,
+  "_comment_intents": "Avoid generic words like 'issue', 'working', 'in', 'me'. Use synonyms.json to normalize variants (wi-fi->wifi, cannot->cant, etc.).",
+  "intents": [
+    {
+      "id": "wifi_eduroam_connectivity",
+      "title": "WiFi / Eduroam Connectivity",
+      "description": "Can't connect to eduroam, disconnects, limited connectivity/no internet, captive portal.",
+      "keywords": [
+        { "term": "wifi", "weight": 6 },
+        { "term": "wireless", "weight": 5 },
+        { "term": "eduroam", "weight": 9 },
+        { "term": "msetup", "weight": 7 },
+        { "term": "internet", "weight": 5 },
+        { "term": "portal", "weight": 5 },
+        { "term": "disconnect", "weight": 6 },
+        { "term": "dropping", "weight": 5 },
+        { "term": "limited", "weight": 4 },
+        { "term": "network", "weight": 4 },
+        { "term": "connect", "weight": 5 },
+        { "term": "slow", "weight": 3 }
+      ],
+      "negative_keywords": [
+        { "term": "printer", "weight": -3 }
+      ]
+    },
+    {
+      "id": "password_account_access",
+      "title": "Passwords / Uniqname Account Access",
+      "description": "Forgot password, reset needed, account locked, uniqname login issues.",
+      "keywords": [
+        { "term": "password", "weight": 9 },
+        { "term": "forgot", "weight": 7 },
+        { "term": "reset", "weight": 8 },
+        { "term": "locked", "weight": 7 },
+        { "term": "uniqname", "weight": 7 },
+        { "term": "mcommunity", "weight": 4 },
+        { "term": "login", "weight": 5 },
+        { "term": "access", "weight": 4 },
+        { "term": "signin", "weight": 5 }
+      ],
+      "negative_keywords": [
+        { "term": "duo", "weight": -6 },
+        { "term": "okta", "weight": -6 }
+      ]
+    },
+    {
+      "id": "duo_okta_authentication",
+      "title": "Duo / Okta Authentication",
+      "description": "Duo push not arriving, stuck loading, enrollment, MFA loops.",
+      "keywords": [
+        { "term": "duo", "weight": 9 },
+        { "term": "okta", "weight": 9 },
+        { "term": "mfa", "weight": 7 },
+        { "term": "2fa", "weight": 7 },
+        { "term": "push", "weight": 7 },
+        { "term": "notification", "weight": 5 },
+        { "term": "enroll", "weight": 6 },
+        { "term": "verify", "weight": 5 },
+        { "term": "weblogin", "weight": 4 },
+        { "term": "loop", "weight": 5 },
+        { "term": "stuck", "weight": 5 },
+        { "term": "authenticate", "weight": 4 },
+        { "term": "verification", "weight": 4 }
+      ],
+      "negative_keywords": [
+        { "term": "password", "weight": -4 }
+      ]
+    },
+    {
+      "id": "printing_mprint_setup",
+      "title": "Printing / MPrint Setup",
+      "description": "Printer issues, MPrint setup, stuck print jobs, queue/release problems.",
+      "keywords": [
+        { "term": "printer", "weight": 9 },
+        { "term": "printing", "weight": 7 },
+        { "term": "mprint", "weight": 9 },
+        { "term": "papercut", "weight": 7 },
+        { "term": "queue", "weight": 6 },
+        { "term": "stuck", "weight": 5 },
+        { "term": "release", "weight": 6 },
+        { "term": "followme", "weight": 4 }
+      ],
+      "negative_keywords": [
+        { "term": "duo", "weight": -3 },
+        { "term": "okta", "weight": -3 }
+      ]
+    },
+    {
+      "id": "software_installation_updates",
+      "title": "Software Install / Updates",
+      "description": "Install/update apps (Chrome, Office), activation problems, software center issues.",
+      "keywords": [
+        { "term": "install", "weight": 7 },
+        { "term": "update", "weight": 7 },
+        { "term": "upgrade", "weight": 6 },
+        { "term": "software", "weight": 5 },
+        { "term": "softwarecenter", "weight": 8 },
+        { "term": "chrome", "weight": 8 },
+        { "term": "office", "weight": 7 },
+        { "term": "microsoft", "weight": 6 },
+        { "term": "activation", "weight": 7 },
+        { "term": "windows", "weight": 6 },
+        { "term": "macos", "weight": 6 }
+      ],
+      "negative_keywords": [
+        { "term": "duo", "weight": -4 },
+        { "term": "okta", "weight": -4 },
+        { "term": "printer", "weight": -2 }
+      ]
+    },
+    {
+      "id": "vpn_remote_access",
+      "title": "VPN / Remote Access",
+      "description": "UMVPN / Cisco Secure Client issues, cannot connect off-campus, remote access problems.",
+      "keywords": [
+        { "term": "vpn", "weight": 9 },
+        { "term": "umvpn", "weight": 9 },
+        { "term": "cisco", "weight": 7 },
+        { "term": "anyconnect", "weight": 7 },
+        { "term": "secureclient", "weight": 7 },
+        { "term": "offcampus", "weight": 6 }
+      ],
+      "negative_keywords": [
+        { "term": "printer", "weight": -2 }
+      ]
+    },
+    {
+      "id": "google_drive_dropbox_sharing",
+      "title": "Google Drive / Dropbox Sharing & Access",
+      "description": "Sharing access issues, missing files, Dropbox login loops, permissions.",
+      "keywords": [
+        { "term": "drive", "weight": 7 },
+        { "term": "dropbox", "weight": 8 },
+        { "term": "shared", "weight": 6 },
+        { "term": "sharing", "weight": 6 },
+        { "term": "permission", "weight": 6 },
+        { "term": "denied", "weight": 7 },
+        { "term": "google", "weight": 3}
+      ],
+      "negative_keywords": [
+        { "term": "vpn", "weight": -2 }
+      ]
+    }
+  ],
+  "thresholds": {
+    "min_confidence": 0.35,
+    "tie_delta": 0.08
+  }
+}
