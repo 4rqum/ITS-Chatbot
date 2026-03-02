@@ -1,0 +1,186 @@
+{
+  "_comment": "UMich-ITS Chatbot - Synonyms/Normalization map. Use this BEFORE tokenization where possible (phrase-level). Then tokenize and apply single-token synonyms too.",
+  "schema_version": 1,
+
+  "_comment_pipeline": [
+    "1) lowercase input",
+    "2) apply phrase_map replacements (multiword -> single token)",
+    "3) remove punctuation (keep letters/numbers), collapse whitespace",
+    "4) split into tokens",
+    "5) apply token_map replacements (single token -> canonical token)"
+  ],
+
+  "phrase_map": {
+    "_comment": "Multi-word or hyphenated variants mapped into your canonical single-word tokens.",
+    "wi fi": "wifi",
+    "wi-fi": "wifi",
+    "wire less": "wireless",
+
+    "m setup": "msetup",
+    "m-setup": "msetup",
+
+    "captive portal": "portal",
+    "sign in": "signin",
+    "sign-in": "signin",
+    "log in": "login",
+    "log-in": "login",
+
+    "two factor": "2fa",
+    "two-factor": "2fa",
+    "two factor authentication": "2fa",
+    "multi factor": "mfa",
+    "multi-factor": "mfa",
+
+    "push notification": "notification",
+
+    "web login": "weblogin",
+    "web-login": "weblogin",
+
+    "software center": "softwarecenter",
+    "managed software center": "softwarecenter",
+
+    "secure client": "secureclient",
+    "cisco secure client": "secureclient",
+
+    "any connect": "anyconnect",
+    "cisco anyconnect": "anyconnect",
+
+    "off campus": "offcampus",
+    "off-campus": "offcampus",
+
+    "follow me": "followme",
+    "follow-me": "followme",
+
+    "access denied": "denied"
+  },
+
+  "token_map": {
+    "_comment": "Single-token spelling variants + common misspellings -> canonical token.",
+
+    "wi-fi": "wifi",
+    "wlan": "wifi",
+    "wirelessinternet": "wifi",
+
+    "eduroamwifi": "eduroam",
+
+    "msetup2": "msetup",
+    "mset-up": "msetup",
+
+    "net": "network",
+    "networking": "network",
+
+    "disconnecting": "disconnect",
+    "disconnected": "disconnect",
+    "drops": "dropping",
+    "dropped": "dropping",
+
+    "slowness": "slow",
+    "lag": "slow",
+    "laggy": "slow",
+
+    "signin": "signin",
+    "sign-in": "signin",
+    "signon": "signin",
+    "sign-on": "signin",
+
+    "logon": "login",
+    "log-on": "login",
+    "login": "login",
+
+    "pw": "password",
+    "passcode": "password",
+
+    "forgotten": "forgot",
+
+    "lock": "locked",
+    "lockout": "locked",
+
+    "uniq": "uniqname",
+    "uniqname": "uniqname",
+    "mcommunity": "mcommunity",
+
+    "oktaverify": "okta",
+    "duomobile": "duo",
+
+    "twofactor": "2fa",
+    "2-factor": "2fa",
+
+    "multifactor": "mfa",
+
+    "notif": "notification",
+    "notifications": "notification",
+
+    "enrollment": "enroll",
+
+    "verification": "verification",
+    "verify": "verify",
+    "auth": "authenticate",
+    "authentication": "authenticate",
+    "authenticating": "authenticate",
+
+    "looping": "loop",
+    "loops": "loop",
+
+    "printing": "printing",
+    "print": "printing",
+    "printer": "printer",
+
+    "papercut": "papercut",
+    "mprint": "mprint",
+    "queueing": "queue",
+
+    "released": "release",
+    "releasing": "release",
+
+    "followme": "followme",
+
+    "installing": "install",
+    "installed": "install",
+    "installation": "install",
+
+    "updated": "update",
+    "updating": "update",
+    "upgrade": "upgrade",
+    "upgraded": "upgrade",
+
+    "softwarecenter": "softwarecenter",
+
+    "ms": "microsoft",
+    "microsoft365": "microsoft",
+    "office365": "office",
+
+    "activate": "activation",
+    "activated": "activation",
+    "activating": "activation",
+
+    "win": "windows",
+    "win11": "windows",
+    "win10": "windows",
+
+    "osx": "macos",
+    "mac": "macos",
+
+    "vpn": "vpn",
+    "umvpn": "umvpn",
+
+    "secureclient": "secureclient",
+    "anyconnect": "anyconnect",
+
+    "offcampus": "offcampus",
+
+    "dropbox": "dropbox",
+    "gdrive": "drive",
+    "googledrive": "drive",
+    "drive": "drive",
+
+    "sharedrive": "shared",
+    "sharedfolder": "shared",
+
+    "permissions": "permission",
+    "perms": "permission",
+
+    "denite": "denied",
+    "denited": "denied",
+    "deny": "denied"
+  }
+}
