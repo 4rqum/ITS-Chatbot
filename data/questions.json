@@ -1,0 +1,197 @@
+{
+  "_comment": "UMich-ITS Chatbot - Diagnostic Questions. Designed to work with single-word token intents + synonyms normalization.",
+  "schema_version": 1,
+
+  "_comment_design": [
+    "Use 5 universal questions for all issues (asked first).",
+    "Then ask 2 intent-specific questions for the top intent (or top 2 if tie).",
+    "Each question stores an answer in ConversationState.answers[store_key].",
+    "Types: yesno | choice | text",
+    "If you want automatic branching later, add 'rules' per question, but keep v1 simple."
+  ],
+
+  "universal": [
+    {
+      "id": "u_device_scope",
+      "text": "Is this happening on just one device, or multiple devices?",
+      "type": "choice",
+      "options": ["one", "multiple", "not_sure"],
+      "store_key": "device_scope",
+      "_comment": "Helps separate device-specific vs network/account-wide problems."
+    },
+    {
+      "id": "u_location",
+      "text": "Where are you right now?",
+      "type": "choice",
+      "options": ["on_campus", "off_campus", "northwood", "not_sure"],
+      "store_key": "location",
+      "_comment": "Northwood gets special WiFi steps; off-campus impacts VPN, Duo, and login paths."
+    },
+    {
+      "id": "u_connection_type",
+      "text": "Which connection are you using when the problem happens?",
+      "type": "choice",
+      "options": ["wifi", "ethernet", "both", "not_sure"],
+      "store_key": "connection_type",
+      "_comment": "If ethernet works but wifi doesn't, route to WiFi troubleshooting."
+    },
+    {
+      "id": "u_start_time",
+      "text": "When did this start?",
+      "type": "choice",
+      "options": ["today", "last_few_days", "weeks_or_more", "not_sure"],
+      "store_key": "start_time",
+      "_comment": "Helps decide if this is a sudden outage vs long-term configuration."
+    },
+    {
+      "id": "u_recent_change",
+      "text": "Did anything change right before this started? (new device, password reset, update, new router, etc.)",
+      "type": "choice",
+      "options": ["yes", "no", "not_sure"],
+      "store_key": "recent_change",
+      "_comment": "Password resets often break eduroam, VPN, and some app sessions."
+    }
+  ],
+
+  "_comment_intent_questions": "Each intent has 2 questions. Ask these after universal questions (or use them as tie-breakers).",
+  "intent_specific": {
+    "wifi_eduroam_connectivity": [
+      {
+        "id": "w_eduroam_or_other",
+        "text": "Which network are you trying to use?",
+        "type": "choice",
+        "options": ["eduroam", "msetup", "other_wifi", "not_sure"],
+        "store_key": "wifi_network",
+        "_comment": "If they pick eduroam/msetup, you can point them to profile install/renew steps."
+      },
+      {
+        "id": "w_symptom",
+        "text": "What best describes the WiFi problem?",
+        "type": "choice",
+        "options": ["cant_connect", "connects_no_internet", "disconnects", "slow", "captive_portal", "not_sure"],
+        "store_key": "wifi_symptom",
+        "_comment": "Maps directly to troubleshooting branches."
+      }
+    ],
+
+    "password_account_access": [
+      {
+        "id": "p_what_login_fails",
+        "text": "What are you trying to log into when it fails?",
+        "type": "choice",
+        "options": ["wolverine_access", "email", "canvas", "mcommunity", "other", "not_sure"],
+        "store_key": "login_target",
+        "_comment": "Helps you route the fix or escalate to the right support channel."
+      },
+      {
+        "id": "p_error_type",
+        "text": "What do you see when you try to sign in?",
+        "type": "choice",
+        "options": ["forgot_password", "locked_out", "wrong_password", "account_disabled", "unknown_error", "not_sure"],
+        "store_key": "password_symptom",
+        "_comment": "Keeps it high-level; details can be asked in freeform later."
+      }
+    ],
+
+    "duo_okta_authentication": [
+      {
+        "id": "d_problem_type",
+        "text": "What’s the Duo/Okta problem?",
+        "type": "choice",
+        "options": ["push_not_arriving", "stuck_loading", "looping_login", "new_phone", "cant_enroll", "not_sure"],
+        "store_key": "duo_symptom",
+        "_comment": "Common paths: push delay, enrollment/new phone, or SSO loop."
+      },
+      {
+        "id": "d_method",
+        "text": "How are you trying to approve the login?",
+        "type": "choice",
+        "options": ["push", "passcode", "phone_call", "not_sure"],
+        "store_key": "duo_method",
+        "_comment": "If push fails, passcode often works; this guides procedural steps."
+      }
+    ],
+
+    "printing_mprint_setup": [
+      {
+        "id": "pr_where_printing",
+        "text": "Where are you printing from?",
+        "type": "choice",
+        "options": ["campus_mprint", "personal_printer", "department_printer", "not_sure"],
+        "store_key": "print_environment",
+        "_comment": "Separates MPrint issues vs local printer driver issues."
+      },
+      {
+        "id": "pr_symptom",
+        "text": "What’s happening with the print job?",
+        "type": "choice",
+        "options": ["wont_print", "stuck_in_queue", "prints_wrong", "cant_find_printer", "cant_release", "not_sure"],
+        "store_key": "print_symptom",
+        "_comment": "Queue/release problems map to PaperCut/MPrint troubleshooting."
+      }
+    ],
+
+    "software_installation_updates": [
+      {
+        "id": "s_target_app",
+        "text": "Which app or update are you working on?",
+        "type": "choice",
+        "options": ["chrome", "office", "windows_update", "macos_update", "softwarecenter", "other", "not_sure"],
+        "store_key": "software_target",
+        "_comment": "Lets you load the right procedural steps quickly."
+      },
+      {
+        "id": "s_symptom",
+        "text": "What best describes the problem?",
+        "type": "choice",
+        "options": ["cant_install", "cant_update", "activation", "crashing", "missing_app", "not_sure"],
+        "store_key": "software_symptom",
+        "_comment": "Activation issues are a distinct branch."
+      }
+    ],
+
+    "vpn_remote_access": [
+      {
+        "id": "v_client",
+        "text": "Which VPN are you using?",
+        "type": "choice",
+        "options": ["umvpn", "cisco_anyconnect", "secureclient", "not_sure"],
+        "store_key": "vpn_client",
+        "_comment": "Your synonyms normalize anyconnect/secureclient; this still helps clarity."
+      },
+      {
+        "id": "v_where",
+        "text": "Are you trying to connect from off campus?",
+        "type": "yesno",
+        "options": ["yes", "no", "not_sure"],
+        "store_key": "vpn_offcampus",
+        "_comment": "Off-campus is the dominant use-case and changes the expected behavior."
+      }
+    ],
+
+    "google_drive_dropbox_sharing": [
+      {
+        "id": "g_service",
+        "text": "Which service is the issue in?",
+        "type": "choice",
+        "options": ["google_drive", "dropbox", "not_sure"],
+        "store_key": "storage_service",
+        "_comment": "Lets you choose the correct permission/share flow."
+      },
+      {
+        "id": "g_symptom",
+        "text": "What best describes the access/sharing problem?",
+        "type": "choice",
+        "options": ["permission_denied", "missing_file", "cant_share", "login_loop", "shared_link_issue", "not_sure"],
+        "store_key": "storage_symptom",
+        "_comment": "Permission denied vs missing file are totally different procedures."
+      }
+    ]
+  },
+
+  "_comment_tiebreaker_policy": "Optional: If top 2 intent scores are close, ask one question from each of the top 2 intents and rescore.",
+  "tie_breaking": {
+    "enabled": true,
+    "max_extra_questions": 2
+  }
+}
