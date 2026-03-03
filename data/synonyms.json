@@ -1,7 +1,6 @@
 {
-  "_comment": "UMich-ITS Chatbot - Synonyms/Normalization map. Use this BEFORE tokenization where possible (phrase-level). Then tokenize and apply single-token synonyms too.",
+  "_comment": "UMich-ITS Chatbot - Synonyms/Normalization map (trimmed for 3-intent prototype: Okta, VPN, MPrint).",
   "schema_version": 1,
-
   "_comment_pipeline": [
     "1) lowercase input",
     "2) apply phrase_map replacements (multiword -> single token)",
@@ -9,17 +8,8 @@
     "4) split into tokens",
     "5) apply token_map replacements (single token -> canonical token)"
   ],
-
   "phrase_map": {
-    "_comment": "Multi-word or hyphenated variants mapped into your canonical single-word tokens.",
-    "wi fi": "wifi",
-    "wi-fi": "wifi",
-    "wire less": "wireless",
-
-    "m setup": "msetup",
-    "m-setup": "msetup",
-
-    "captive portal": "portal",
+    "_comment": "Multi-word variants mapped into canonical single-word tokens.",
     "sign in": "signin",
     "sign-in": "signin",
     "log in": "login",
@@ -31,15 +21,9 @@
     "multi-factor": "mfa",
 
     "push notification": "notification",
-    "fast pass": "fastpass",
-    "touch id": "touchid",
-    "okta verify": "oktaverify",
 
     "web login": "weblogin",
     "web-login": "weblogin",
-
-    "software center": "softwarecenter",
-    "managed software center": "softwarecenter",
 
     "secure client": "secureclient",
     "cisco secure client": "secureclient",
@@ -51,64 +35,17 @@
     "off-campus": "offcampus",
 
     "follow me": "followme",
-    "follow-me": "followme",
-
-    "access denied": "denied"
+    "follow-me": "followme"
   },
-
   "token_map": {
     "_comment": "Single-token spelling variants + common misspellings -> canonical token.",
 
-    "wi-fi": "wifi",
-    "wlan": "wifi",
-    "wirelessinternet": "wifi",
-
-    "eduroamwifi": "eduroam",
-
-    "msetup2": "msetup",
-    "mset-up": "msetup",
-
-    "net": "network",
-    "networking": "network",
-
-    "disconnecting": "disconnect",
-    "disconnected": "disconnect",
-    "drops": "dropping",
-    "dropped": "dropping",
-
-    "slowness": "slow",
-    "lag": "slow",
-    "laggy": "slow",
-
-    "signin": "signin",
-    "sign-in": "signin",
-    "signon": "signin",
-    "sign-on": "signin",
-
-    "logon": "login",
-    "log-on": "login",
-    "login": "login",
-
-    "pw": "password",
-    "passcode": "password",
-
-    "forgotten": "forgot",
-
-    "lock": "locked",
-    "lockout": "locked",
-
-    "uniq": "uniqname",
-    "uniqname": "uniqname",
-    "mcommunity": "mcommunity",
-
+    "oktaverify": "okta",
     "oktaverify": "okta",
     "duomobile": "duo",
-    "fastpass": "fastpass",
-    "touchid": "touchid",
 
     "twofactor": "2fa",
     "2-factor": "2fa",
-
     "multifactor": "mfa",
 
     "notif": "notification",
@@ -116,8 +53,6 @@
 
     "enrollment": "enroll",
 
-    "verification": "verification",
-    "verify": "verify",
     "auth": "authenticate",
     "authentication": "authenticate",
     "authenticating": "authenticate",
@@ -125,46 +60,10 @@
     "looping": "loop",
     "loops": "loop",
 
-    "printing": "printing",
-    "print": "printing",
-    "printer": "printer",
+    "fast-pass": "fastpass",
+    "fastpass": "fastpass",
 
-    "papercut": "papercut",
-    "mprint": "mprint",
-    "queueing": "queue",
-
-    "released": "release",
-    "releasing": "release",
-
-    "followme": "followme",
-
-    "installing": "install",
-    "installed": "install",
-    "installation": "install",
-
-    "updated": "update",
-    "updating": "update",
-    "upgrade": "upgrade",
-    "upgraded": "upgrade",
-
-    "softwarecenter": "softwarecenter",
-
-    "ms": "microsoft",
-    "microsoft365": "microsoft",
-    "office365": "office",
-
-    "activate": "activation",
-    "activated": "activation",
-    "activating": "activation",
-
-    "win": "windows",
-    "win11": "windows",
-    "win10": "windows",
-
-    "osx": "macos",
-    "mac": "macos",
-
-    "vpn": "vpn",
+    "vpnclient": "vpn",
     "umvpn": "umvpn",
 
     "secureclient": "secureclient",
@@ -172,19 +71,19 @@
 
     "offcampus": "offcampus",
 
-    "dropbox": "dropbox",
-    "gdrive": "drive",
-    "googledrive": "drive",
-    "drive": "drive",
+    "print": "printing",
+    "printing": "printing",
+    "printer": "printer",
 
-    "sharedrive": "shared",
-    "sharedfolder": "shared",
+    "papercut": "papercut",
+    "mprint": "mprint",
 
-    "permissions": "permission",
-    "perms": "permission",
+    "queued": "queue",
+    "queueing": "queue",
 
-    "denite": "denied",
-    "denited": "denied",
-    "deny": "denied"
+    "released": "release",
+    "releasing": "release",
+
+    "followme": "followme"
   }
 }
