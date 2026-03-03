@@ -276,7 +276,7 @@
     },
 
     "duo_okta_authentication": {
-      "_comment": "Okta replaced Duo. This intent handles enrollment, sign-in method selection, Verify app issues, and FastPass. Uses questions.json keys: duo_symptom, duo_method (you may rename later to okta_symptom/okta_method).",
+      "_comment": "Okta replaced Duo. This intent handles enrollment, sign-in method selection, Verify app issues, and FastPass. Uses questions.json keys: okta_symptom, okta_method.",
       "entry": {
         "title": "Okta Authentication (MFA / Enrollment / FastPass)",
         "when_to_use": [
