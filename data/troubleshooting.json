@@ -1,0 +1,425 @@
+{
+  "_comment": "UMich-ITS Chatbot - Troubleshooting flows (v1). Top 3 intents only: VPN, MPrint, Okta. Designed to pair with intents.json + synonyms.json + questions.json.",
+  "schema_version": 1,
+
+  "_comment_design": [
+    "Conversation flow: (1) normalize with synonyms.json, (2) score intents.json, (3) ask universal questions, (4) ask 2 intent-specific questions, (5) select a flow and print steps.",
+    "This file is intentionally procedural + non-ML. It is safe to extend with more intents later.",
+    "Do NOT ask the user to paste passwords. Allow them to authenticate only via official login prompts."
+  ],
+
+  "global": {
+    "official_links": {
+      "_comment": "Keep URLs here so you can reuse them in multiple flows.",
+      "vpn_overview": "https://its.umich.edu/enterprise/wifi-networks/vpn",
+      "mprint_install": "https://mprint.umich.edu/install",
+      "mprint_release": "https://mprint.umich.edu/release",
+      "msetup": "https://msetup.its.umich.edu/",
+      "okta_org": "https://okta.umich.edu",
+      "okta_verify_test": "https://oktaverify.umich.edu/verify"
+    },
+    "escalation": {
+      "_comment": "You can replace these with the exact campus contacts you want to display.",
+      "generic_message": "If these steps don’t fix it, contact the ITS Service Center and include: device type, OS, time of attempt, location (building/room), network used, and the exact error message.",
+      "fields_to_collect": [
+        "device_type",
+        "os",
+        "location",
+        "network_name",
+        "time_of_attempt",
+        "error_text"
+      ]
+    }
+  },
+
+  "intents": {
+    "vpn_remote_access": {
+      "_comment": "Uses questions.json keys: vpn_client, vpn_offcampus, location, connection_type. Also useful: device_scope, recent_change.",
+      "entry": {
+        "title": "VPN / Remote Access",
+        "when_to_use": [
+          "User mentions VPN, UMVPN, Cisco AnyConnect, Cisco Secure Client, off-campus access, remote desktop blocked"
+        ],
+        "safety_note": "Do not request passwords. Only direct the user to official login prompts."
+      },
+
+      "flows": {
+        "install_and_connect": {
+          "title": "Install and connect to U-M Net VPN (UMVPN)",
+          "steps": [
+            "Confirm you have an active internet connection first (WiFi/Ethernet/Hotspot).",
+            "Install the VPN client using the official Getting Started guide (choose your OS).",
+            "Open Cisco Secure Client (or AnyConnect, if that’s what the user has).",
+            "Select the profile: 'UMVPN - All Traffic' or 'UMVPN - Only U-M Traffic'.",
+            "Click Connect.",
+            "Authenticate with uniqname + UMICH password when prompted.",
+            "Complete MFA when prompted."
+          ],
+          "notes": [
+            "You must turn ON VPN before opening services that require it.",
+            "Alumni, retirees, and friend accounts generally cannot use UMVPN (eligibility rules apply)."
+          ],
+          "escalate_if": [
+            "User cannot install due to admin restrictions",
+            "User is not eligible for VPN but needs access",
+            "MFA enrollment/login is failing (route to Okta intent)"
+          ]
+        },
+
+        "eligibility_check": {
+          "title": "Check if you’re eligible for U-M VPN",
+          "steps": [
+            "If you are a current student, faculty, staff, or sponsored affiliate with a regular uniqname, you should be eligible while that affiliation is active.",
+            "If you are alumni/retiree/friend account or have a temporary uniqname, VPN access may be blocked.",
+            "If eligibility is unclear, escalate with your affiliation type and uniqname category."
+          ],
+          "escalate_if": [
+            "User believes they should be eligible but VPN access is blocked"
+          ]
+        },
+
+        "choose_profile": {
+          "title": "Which UMVPN profile should I use?",
+          "steps": [
+            "Use 'UMVPN - All Traffic' when you need all internet traffic routed through U-M (also helps with geo-blocked services).",
+            "Use 'UMVPN - Only U-M Traffic' when you only need U-M resources routed through VPN.",
+            "If a form/site is blocked by geographic restrictions, try 'All Traffic'."
+          ]
+        },
+
+        "miworkspace_note": {
+          "title": "MiWorkspace managed device note",
+          "steps": [
+            "On some MiWorkspace Windows/PaaS devices, the Cisco Management Tunnel may be used automatically for standard UMVPN behavior.",
+            "If you still need to manually connect via Cisco Secure Client, use the UMVPN profile options available to you."
+          ],
+          "escalate_if": [
+            "User needs remote desktop off-campus and is blocked even with VPN on"
+          ]
+        },
+
+        "temp_folder_error_windows": {
+          "title": "Windows: 'Failed to determine valid temporary file folder'",
+          "steps": [
+            "This usually happens when the Cisco temp folder is missing.",
+            "Go to C:\\Windows\\Temp\\",
+            "Create a folder named 'Cisco'.",
+            "Try connecting again."
+          ],
+          "escalate_if": [
+            "User cannot create folders due to permissions",
+            "Error persists after folder creation"
+          ]
+        },
+
+        "linux_libxml2_issue": {
+          "title": "Linux: Cisco Secure Client libxml2 compatibility issue",
+          "steps": [
+            "This can occur after a libxml2 update where the client expects a missing library version.",
+            "Option A: downgrade libxml2 to a compatible version for your distribution.",
+            "Option B: place a compatible libxml2 library locally and adjust LD_LIBRARY_PATH for the client.",
+            "Option C: update Cisco Secure Client to the latest available version."
+          ],
+          "notes": [
+            "Linux support may be limited; changes to system libraries should be done carefully."
+          ],
+          "escalate_if": [
+            "User is uncomfortable changing system libraries",
+            "Client fails after updates and needs official support"
+          ]
+        },
+
+        "slow_or_bad_request_app": {
+          "title": "Site loads slowly / bad request (network-related) — try VPN or different network",
+          "steps": [
+            "Try loading the site on a different network (switch WiFi networks or try mobile data).",
+            "If eligible, connect to UMVPN and try again.",
+            "If using a bookmark, type the URL directly or refresh the bookmark."
+          ],
+          "escalate_if": [
+            "Issue happens on multiple networks + VPN",
+            "Only one specific service is failing consistently"
+          ]
+        }
+      }
+    },
+
+    "printing_mprint_setup": {
+      "_comment": "Uses questions.json keys: print_environment, print_symptom, location, connection_type.",
+      "entry": {
+        "title": "Printing / MPrint Setup",
+        "when_to_use": [
+          "User mentions MPrint, PaperCut, Follow Me, print queue, release, campus printer"
+        ],
+        "requirements": [
+          "To install printers AND to print: user must be on campus Ethernet, on MWireless, or connected to UMVPN"
+        ],
+        "notes": [
+          "Campus Computing Sites printers are not available for installation; use Follow Me, mprint.umich.edu, or a Campus Computing Sites computer.",
+          "Unit-managed devices (e.g., Michigan Medicine/CoreImage) should contact their unit IT."
+        ],
+        "safety_note": "Do not ask for passwords. Only direct them to official login prompts."
+      },
+
+      "flows": {
+        "default": {
+          "title": "Install MPrint Printer Installer and add printers / Follow Me",
+          "steps": [
+            "Confirm network access: on-campus Ethernet, MWireless, or UMVPN (required to install and print).",
+            "Go to mprint.umich.edu/install and sign in if prompted.",
+            "Download the MPrint Installer application (link in the informational box).",
+            "Run the downloaded installer to install the MPrint Printer Installer.",
+            "Open the MPrint Printer Installer (Desktop shortcut on Windows, Applications folder on macOS).",
+            "On first launch, log in when prompted, then return to the application.",
+            "Use Quick Search or MPrint Maps to find queues, then install the printer queue(s) you need.",
+            "Optional: install the 'Follow Me' queue so you can release at any compatible printer."
+          ]
+        },
+
+        "cant_find_printer": {
+          "title": "Can’t find an MPrint printer",
+          "steps": [
+            "Confirm you are connected to campus Ethernet/MWireless or UMVPN.",
+            "Open the MPrint Printer Installer and sign in if prompted.",
+            "Use Quick Search (top right) with the building/printer name.",
+            "Try MPrint Maps and choose the building + floor, then install from the map.",
+            "If it’s a Campus Computing Sites printer: you cannot install it directly—use Follow Me, mprint.umich.edu, or a Campus Computing Sites computer."
+          ]
+        },
+
+        "wont_print": {
+          "title": "Print job won’t print",
+          "steps": [
+            "Confirm you are connected to campus Ethernet/MWireless or UMVPN.",
+            "Try printing to the Follow Me queue instead of a specific device.",
+            "If prompted by PaperCut, respond within 10 minutes or the job may be deleted.",
+            "If PaperCut prompts for credentials, enter uniqname + UMICH password and select 'Remember my identity' if appropriate.",
+            "If PaperCut didn’t launch properly, log out and log back in, then try again."
+          ]
+        },
+
+        "stuck_in_queue": {
+          "title": "Print job stuck in queue / not releasing",
+          "steps": [
+            "If you printed to Follow Me: release at a printer (Mcard swipe / printer login / MPrint Mobile app).",
+            "You can also release or cancel jobs via mprint.umich.edu/release.",
+            "If the job fails due to a jam or parse error and cannot resume, resubmit the job to Follow Me and release again."
+          ]
+        },
+
+        "cant_release": {
+          "title": "Can’t release Follow Me job",
+          "steps": [
+            "Try releasing via mprint.umich.edu/release (release or cancel from the site).",
+            "Try releasing at the printer again (Mcard swipe, printer login, or MPrint Mobile app).",
+            "If the job failed due to jam/parse error, re-print to Follow Me and release again.",
+            "Log out of the printer when you’re done."
+          ]
+        },
+
+        "papercut_saved_identity_wrong": {
+          "title": "PaperCut prompting / wrong saved identity",
+          "steps": [
+            "Open the PaperCut client configuration file:",
+            "Windows: C:\\Users\\[uniqname]\\pc-client.properties",
+            "macOS: /Users/[username]/Library/Preferences/PCClient/config.properties",
+            "Find 'neverrequestidentity' and change it so PaperCut will ask again (set to N).",
+            "Linux: delete ~/pc-client.properties and restart PaperCut.",
+            "Restart PaperCut (or log out/in) and enter the correct uniqname when prompted."
+          ]
+        },
+
+        "windows_security_or_admin": {
+          "title": "Windows blocked installer / needs admin",
+          "steps": [
+            "If you see 'Windows protected your PC': right-click installer > Properties > Unblock (if present) > run again.",
+            "If the MPrint Installer says it must run as Administrator: close it, then right-click the MPrint Installer shortcut and choose 'Run as Administrator'.",
+            "Launch the installed 'MPrint Installer' shortcut (not the setup EXE again).",
+            "If no shortcut exists: check Start Menu or open %localappdata%\\mprint_installer in File Explorer."
+          ],
+          "escalate_if": [
+            "User does not have admin rights"
+          ]
+        },
+
+        "bitdefender_conflict": {
+          "title": "BitDefender blocks MPrint install (personal Windows)",
+          "steps": [
+            "Temporarily disable BitDefender.",
+            "Run the MPrint Installer and complete initial setup (including PaperCut).",
+            "Re-enable BitDefender after setup completes."
+          ]
+        },
+
+        "mobile_upload_ios": {
+          "title": "Upload/Print to Follow Me from iPhone (iOS)",
+          "steps": [
+            "Install and open the MPrint app.",
+            "Log in with uniqname + UMICH password (stay logged in).",
+            "Export/Share the document as a PDF.",
+            "Choose 'MPrint Follow Me' from the share/open menu.",
+            "Tap Print.",
+            "Release via the mobile app (nearby printer list or scan printer QR code)."
+          ]
+        },
+
+        "mobile_release_android": {
+          "title": "Release Follow Me from Android",
+          "steps": [
+            "Open the MPrint mobile app and go to Select Jobs.",
+            "Select job(s) to release (you can also delete/cancel).",
+            "Choose a printer from nearby list or scan the printer QR code.",
+            "Release the selected job(s)."
+          ]
+        }
+      }
+    },
+
+    "duo_okta_authentication": {
+      "_comment": "Okta replaced Duo. This intent handles enrollment, sign-in method selection, Verify app issues, and FastPass. Uses questions.json keys: duo_symptom, duo_method (you may rename later to okta_symptom/okta_method).",
+      "entry": {
+        "title": "Okta Authentication (MFA / Enrollment / FastPass)",
+        "when_to_use": [
+          "User mentions Okta, Okta Verify, MFA, 2FA, push, FastPass, enrollment, stuck loading, looping login"
+        ],
+        "safety_note": "Do not ask for passwords. Only direct the user to official login prompts."
+      },
+
+      "flows": {
+        "first_time_enroll_computer_plus_phone": {
+          "title": "First-time enrollment (best experience: computer + phone)",
+          "steps": [
+            "On a computer, go to a U-M sign-in page (e.g., Wolverine Access) and enter uniqname/email, then UMICH password.",
+            "When prompted to set up MFA, proceed to set up Okta Verify.",
+            "On your phone, install the 'Okta Verify' app from the official app store.",
+            "In Okta Verify: Get Started → Add Account → Organization → enter/select the U-M org when prompted (okta.umich.edu), then scan the QR code shown on the computer.",
+            "If you can’t scan a QR code, choose the 'Can’t scan?' option and use the SMS verification path if offered.",
+            "Finish setup and click Done/Continue until you reach confirmation."
+          ],
+          "notes": [
+            "If any app asks for payment, it’s the wrong app (Okta Verify is free).",
+            "Consider adding a backup MFA method/device later if supported."
+          ],
+          "escalate_if": [
+            "User cannot receive SMS (or SMS not supported for their number)",
+            "Enrollment fails repeatedly or QR never works"
+          ]
+        },
+
+        "enroll_mobile_only": {
+          "title": "Enroll using only a mobile device (no computer)",
+          "steps": [
+            "On your phone, open the sign-in page and enter uniqname/email and UMICH password.",
+            "Proceed to enrollment and install Okta Verify if prompted.",
+            "If the process sends you an SMS link, verify it points to the official U-M Okta domain before opening.",
+            "Complete the Okta Verify setup inside the app (biometric optional).",
+            "Finish and confirm enrollment is complete."
+          ],
+          "escalate_if": [
+            "User cannot receive SMS",
+            "User has a new phone and no backup method"
+          ]
+        },
+
+        "choose_different_mfa_method": {
+          "title": "Choose a different MFA method at sign-in",
+          "steps": [
+            "On the Okta sign-in page, enter uniqname (if needed) and password (if needed).",
+            "If your default method doesn’t appear, select an MFA option from the list.",
+            "Use 'Verify with something else' (or similar) to switch methods.",
+            "If push is undesirable or failing, switch to 'Enter a code' if available."
+          ],
+          "notes": [
+            "If a desktop FastPass option is taking over, fully quit the desktop Okta Verify app to use other methods."
+          ]
+        },
+
+        "touch_id_stopped_working_ios": {
+          "title": "iOS: Touch ID stopped working with Okta Verify",
+          "steps": [
+            "Set up Touch ID on the iPhone/iPad again in device settings.",
+            "Force-quit Okta Verify and reopen it.",
+            "If you see an out-of-sync message, quit and reopen the Okta Verify app again."
+          ]
+        },
+
+        "setup_fastpass_windows": {
+          "title": "Set up Okta FastPass (Windows)",
+          "steps": [
+            "Enroll in Okta on a mobile device first (Okta Verify or a supported token method).",
+            "Ensure Windows Hello is configured (PIN/biometric).",
+            "Open Okta Verify on Windows (MiWorkspace may already have it installed).",
+            "Get Started → Next → enter organization URL if needed: https://okta.umich.edu",
+            "Sign in and approve the prompt (push / verification).",
+            "Enable Windows Hello when prompted.",
+            "Test FastPass in a private/incognito window using: https://oktaverify.umich.edu/verify"
+          ],
+          "notes": [
+            "Browsers may ask permission to discover devices on local network; Allow is typically required for FastPass to work."
+          ]
+        },
+
+        "setup_fastpass_macos": {
+          "title": "Set up Okta FastPass (macOS)",
+          "steps": [
+            "Enroll in Okta on a mobile device first (Okta Verify or a supported token method).",
+            "Ensure Touch ID is enabled (if you want Touch ID-based FastPass).",
+            "Open Okta Verify on the Mac (MiWorkspace may already have it installed).",
+            "Get Started → Next → enter organization URL if needed: https://okta.umich.edu",
+            "Sign in and approve the prompt (push / verification).",
+            "Enable Touch ID if prompted.",
+            "Test FastPass in a private window using: https://oktaverify.umich.edu/verify"
+          ],
+          "notes": [
+            "If you don’t see the Okta Verify icon in the menu bar, you may have too many menu bar items; close some."
+          ]
+        },
+
+        "_comment_general_no_docs": "The next flows are general best-practice steps when you don't have official docs for the exact symptom. They are safe, non-destructive, and designed to reduce false escalations.",
+
+        "push_not_arriving_general": {
+          "title": "Okta Verify push not arriving (general steps)",
+          "steps": [
+            "Confirm the phone has internet access (WiFi or cellular data).",
+            "Open the Okta Verify app directly (don’t wait only for a notification).",
+            "Force-quit Okta Verify and reopen it.",
+            "Toggle airplane mode ON then OFF (resets network).",
+            "If possible, switch networks (WiFi ↔ cellular) and try again.",
+            "At the sign-in screen, choose 'Verify with something else' and use 'Enter a code' if available."
+          ],
+          "escalate_if": [
+            "Push never arrives across networks",
+            "User has no alternative MFA method configured"
+          ]
+        },
+
+        "stuck_loading_or_loop_general": {
+          "title": "Okta sign-in stuck loading or looping (general steps)",
+          "steps": [
+            "Try a private/incognito browser window.",
+            "Clear cookies/site data for the sign-in domain and try again.",
+            "Try a different browser (Chrome ↔ Edge ↔ Safari).",
+            "Disable browser extensions temporarily (especially ad-blockers/privacy tools).",
+            "If on a managed workstation with Okta desktop FastPass, fully quit the desktop Okta Verify app and retry selecting another MFA method."
+          ],
+          "escalate_if": [
+            "Loop persists on multiple browsers + incognito",
+            "User cannot reach the MFA selection page"
+          ]
+        },
+
+        "new_phone_no_backup_general": {
+          "title": "New phone / lost device and can’t approve MFA (general steps)",
+          "steps": [
+            "If you have another enrolled device (tablet/desktop FastPass/token), use it to sign in and add the new phone in Okta Verify.",
+            "If you do NOT have a backup MFA method/device, you will likely need account assistance to transfer/reactivate MFA.",
+            "Escalate to ITS and state: 'new phone, no backup MFA device' + your affiliation + any error text."
+          ],
+          "escalate_if": [
+            "User has no backup method"
+          ]
+        }
+      }
+    }
+  }
+}
