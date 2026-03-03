@@ -31,6 +31,9 @@
     "multi-factor": "mfa",
 
     "push notification": "notification",
+    "fast pass": "fastpass",
+    "touch id": "touchid",
+    "okta verify": "oktaverify",
 
     "web login": "weblogin",
     "web-login": "weblogin",
@@ -100,6 +103,8 @@
 
     "oktaverify": "okta",
     "duomobile": "duo",
+    "fastpass": "fastpass",
+    "touchid": "touchid",
 
     "twofactor": "2fa",
     "2-factor": "2fa",
