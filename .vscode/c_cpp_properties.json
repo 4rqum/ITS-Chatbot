@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/opt/homebrew/include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang++",
+            "intelliSenseMode": "macos-clang-arm64",
+            "cppStandard": "c++17",
+            "cStandard": "c17"
+        },
+        {
+            "name": "c++",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "compilerPath": "/Library/Developer/CommandLineTools/usr/bin/clang++",
+            "intelliSenseMode": "macos-clang-arm64",
+            "cppStandard": "c++17",
+            "cStandard": "c17"
+        }
+    ],
+    "version": 4
+}
