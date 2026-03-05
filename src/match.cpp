@@ -58,7 +58,7 @@ vector<IntentScore> Matcher::score_intents(const vector<string> &tokens, const v
         IntentScore s; // for each intent we'll make a struct to hold it's id and score
         s.intent_id = intent.id; // hold id
         s.score = score_one_intent(tokens, intent); // hold score
-        ranked.push_back(move(s)); // push_back that intentScore into our ranked vector and do this for all intents.
+        ranked.push_back(std::move(s)); // push_back that intentScore into our ranked vector and do this for all intents.
     }
 
     // once all intents are pushed into our vector, we sort from highest first

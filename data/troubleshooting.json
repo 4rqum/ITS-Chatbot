@@ -420,7 +420,15 @@
           ]
         },
 
-        "_comment_general_no_docs": "The next flows are general best-practice steps when you don't have official docs for the exact symptom. They are safe, non-destructive, and designed to reduce false escalations.",
+        "_comment_general_no_docs": {
+          "title": "Info",
+          "steps": [
+            "The next flows are general best-practice steps when you don't have official docs for the exact symptom.",
+            "They are safe, non-destructive, and designed to reduce false escalations."
+          ],
+          "notes": [],
+          "escalate_if": []
+        },
 
         "push_not_arriving_general": {
           "title": "Okta Verify push not arriving (general steps)",

@@ -51,7 +51,7 @@ BotResponse Chatbot::process_user_message(const string &user_text) {
         auto qs = pick_next_question();
         if (!qs.empty()) {
             resp.needs_more_info = true;
-            resp.questions_to_ask = move(qs);
+            resp.questions_to_ask = std::move(qs);
             return resp;
         }
 
@@ -68,7 +68,7 @@ BotResponse Chatbot::process_user_message(const string &user_text) {
     auto questions = pick_next_question();
     if (!questions.empty()) {
         resp.needs_more_info = true;
-        resp.questions_to_ask = move(questions);
+        resp.questions_to_ask = std::move(questions);
         return resp;
     }
 
@@ -95,7 +95,7 @@ BotResponse Chatbot::submit_answer(const string &question_id, const string &answ
 
     if (!questions.empty()) {
         resp.needs_more_info = true;
-        resp.questions_to_ask = move(questions);
+        resp.questions_to_ask = std::move(questions);
         return resp;
     }
 
