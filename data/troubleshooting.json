@@ -44,6 +44,29 @@
       },
 
       "flows": {
+        "default": {
+          "title": "VPN / Remote Access: Start here",
+          "steps": [
+            "Confirm you have an active internet connection first (WiFi/Ethernet/Hotspot).",
+            "If you already have Cisco Secure Client / AnyConnect installed: open it and try connecting to UMVPN.",
+            "If you do NOT have the VPN client installed: install it using the official Getting Started guide (choose your OS).",
+            "Select the profile: 'UMVPN - All Traffic' or 'UMVPN - Only U-M Traffic'.",
+            "Click Connect.",
+            "Authenticate with uniqname + UMICH password when prompted.",
+            "Complete MFA when prompted.",
+            "If the issue is about eligibility (alumni/retiree/friend account): follow the eligibility flow."
+          ],
+          "notes": [
+            "You must turn ON VPN before opening services that require it.",
+            "Alumni, retirees, and friend accounts generally cannot use UMVPN (eligibility rules apply)."
+          ],
+          "escalate_if": [
+            "User cannot install due to admin restrictions",
+            "User is not eligible for VPN but needs access",
+            "MFA enrollment/login is failing (route to Okta intent)"
+          ]
+        },
+
         "install_and_connect": {
           "title": "Install and connect to U-M Net VPN (UMVPN)",
           "steps": [
@@ -286,6 +309,28 @@
       },
 
       "flows": {
+        "default": {
+          "title": "Okta: Start here (general sign-in / MFA steps)",
+          "steps": [
+            "Try signing in again in a private/incognito browser window.",
+            "If the sign-in page is stuck loading or looping: clear cookies/site data for the sign-in domain and try again.",
+            "Try a different browser (Chrome ↔ Edge ↔ Safari).",
+            "If push isn’t arriving: open the Okta Verify app directly and check for a prompt.",
+            "Force-quit Okta Verify and reopen it.",
+            "At the sign-in screen, choose 'Verify with something else' and use 'Enter a code' if available.",
+            "If you have a new phone or lost device and can’t approve MFA, you may need account assistance to transfer/reactivate MFA."
+          ],
+          "notes": [
+            "Do not share passwords in chat. Only sign in through official U-M login prompts.",
+            "If you have multiple enrolled devices, use a backup method/device to get in and add/update your phone in Okta Verify."
+          ],
+          "escalate_if": [
+            "Loop persists on multiple browsers + incognito",
+            "Push never arrives across networks",
+            "User has no backup method/device and cannot approve MFA"
+          ]
+        },
+
         "first_time_enroll_computer_plus_phone": {
           "title": "First-time enrollment (best experience: computer + phone)",
           "steps": [

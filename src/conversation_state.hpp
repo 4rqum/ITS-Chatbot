@@ -71,7 +71,7 @@ struct ConversationState {
         answers[store_key] = value;
     }
 
-    bool already_asked(const std::string &questions_id) {
+    bool already_asked(const std::string &questions_id) const {
         return asked_question_ids.find(questions_id) != asked_question_ids.end();
     }
 
